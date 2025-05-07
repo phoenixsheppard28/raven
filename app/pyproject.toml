@@ -11,6 +11,8 @@ fastapi = "^0.115.12"
 uvicorn = "^0.34.2"
 dotenv = "^0.9.9"
 celery = {extras = ["redis"], version = "^5.5.2"}
+sqlmodel = "^0.0.24"
+openai = "^1.77.0"
 
 
 [build-system]

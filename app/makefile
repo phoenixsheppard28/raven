@@ -9,3 +9,6 @@ stop_redis:
 
 run:
 	poetry run uvicorn main:app --reload
+
+drop_db:
+	rm -r database.db 
