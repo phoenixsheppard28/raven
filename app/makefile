@@ -1,5 +1,5 @@
 celery:
-	poetry run celery -A tasks worker --loglevel=info
+	poetry run celery -A tasks worker --loglevel=info 
 
 redis:
 	brew services start redis 
@@ -12,3 +12,6 @@ run:
 
 reset_db:
 	poetry run python3 internal/db_setup.py 
+
+celery_scale:
+	poetry run celery -A tasks worker --loglevel=info --concurrency=8

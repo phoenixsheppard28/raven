@@ -3,25 +3,36 @@ from tasks import scrape_and_store
 from celery.result import AsyncResult
 from internal.db_setup import engine, SourcePage, TargetPage
 from sqlmodel import Session, select
-import uuid
+from typing import List
 
 
+def add_tasks(urls:List[str]) -> List[AsyncResult]: #
+    """ add tasks to the queue and return the task ids 
+        Since the tasks are added sequentially, the order of the task ids 
+        will be the same as the order of the urls
+    """
+    results = []
+    for url in urls:
+        result : AsyncResult = scrape_and_store.delay(url)
+        results.append(result)
+    return results
 
+           
 
 app = FastAPI()
 
 @app.post("/url")
-async def submit_scrape(request_url:str): # submit a url to be scraped 
+async def submit_scrape(request_url:str)->str: # submit a url to be scraped 
     result : AsyncResult = scrape_and_store.delay(request_url)
-    p = SourcePage(uid = uuid.UUID(result.id), # 
-             url=request_url,
-             status='PENDING',
-             result='testing')
     
-    with Session(engine) as session:
-        session.add(p)
-        session.commit()
-    return "url added to db"
+    return result.id # todo should probably move this to use the add_rows function
+
+@app.post("/url/batch")
+async def submit_batch_scrape(urls: List[str])-> List[str]: # submit a batch of urls to be scraped
+   results = add_tasks(urls)
+   return [task.id for task in results] 
+
+
 
 @app.get("/pages")
 def read_pages():
