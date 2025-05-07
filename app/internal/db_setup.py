@@ -1,21 +1,16 @@
-import sqlite3
-from sqlmodel import Field, SQLModel, create_engine, Session
+from sqlmodel import SQLModel, create_engine, Session
 from sqlalchemy import delete
-import uuid
+from internal.models import SourcePage, TargetPage
 
 
-class Page(SQLModel,table=True):
-    uid: uuid.UUID = Field(nullable=False, primary_key=True)
-    url: str 
-    status: str = Field(default="PENDING") # -- SUCCESS, FAILURE, PENDING, COMPLETED derived from celery status 
-    result: str
 
 engine = create_engine("sqlite:///database.db") # should be swapped for postgresql upon higher throughput for higher write capacity
 SQLModel.metadata.create_all(engine)
 
 def reset_db():
     with Session(engine) as session:
-        session.exec(delete(Page))
+        session.exec(delete(SourcePage))
+        session.exec(delete(TargetPage))
         session.commit()
 
 if __name__=="__main__":
