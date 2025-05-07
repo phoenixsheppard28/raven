@@ -29,3 +29,6 @@ def read_pages():
         pages = session.exec(select(Page)).all()
         return pages
 
+@app.get("/results/{uuid}")
+def get_scrape_result(uuid:str):
+    return {"message":f"Result for job {uuid}"}
