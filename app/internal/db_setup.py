@@ -1,5 +1,6 @@
 import sqlite3
-from sqlmodel import Field, SQLModel, create_engine, select
+from sqlmodel import Field, SQLModel, create_engine, Session
+from sqlalchemy import delete
 import uuid
 
 
@@ -11,3 +12,11 @@ class Page(SQLModel,table=True):
 
 engine = create_engine("sqlite:///database.db") # should be swapped for postgresql upon higher throughput for higher write capacity
 SQLModel.metadata.create_all(engine)
+
+def reset_db():
+    with Session(engine) as session:
+        session.exec(delete(Page))
+        session.commit()
+
+if __name__=="__main__":
+    reset_db()
