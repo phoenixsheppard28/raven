@@ -4,7 +4,6 @@ from internal.secrets import settings
 from internal.db_setup import engine
 from sqlmodel import Session, select
 from internal.models import SourcePage, TargetPage
-from scrapy.crawler import CrawlerProcess
 import uuid
 from crawler.run_spider import run_spider
 
@@ -15,19 +14,20 @@ chat_client=OpenAI(api_key=settings.OPENAI_API_KEY)
 
 @app.task(bind=True) # bind allows accessing of self
 def scrape_and_store(self, url:str):
-    task_id = uuid.UUID(self.request.id) # this is the celery generated UUID we can use to index the task once completed 
-
-    p = SourcePage(
-            uid = task_id, # 
-             url=url,
-             status='PENDING') # set to pending when creating task 
-    with Session(engine) as session:
-        session.add(p)
-        session.commit() # ? n+1 querry problem though, look into this
-    
-    target_keywords=["Budget","ACFR","Finance Director"] # implement regex for this inside the spider?
-
     try:
+        task_id = uuid.UUID(self.request.id) # this is the celery generated UUID we can use to index the task once completed 
+
+        p = SourcePage(
+                uid = task_id, # 
+                url=url,
+                status='PENDING') # set to pending when creating task 
+        with Session(engine) as session:
+            session.add(p)
+            session.commit() # ? n+1 querry problem though, look into this
+        
+        target_keywords = ["Budget", "ACFR", "Finance Director", "CFO", "Financial Report", "Expenditure", "Revenue", "General Fund", "Capital Improvement Plan", "Fiscal Year", "Audit", "Auditor", "Treasurer", "Bond Issuance", "Municipal Bonds", "Debt Service", "Fund Balance", "Operating Budget", "Financial Statement", "Public Finance", "Controller", "Accounting", "CAFR", "GFOA", "Financial Planning", "Budget Hearing", "Budget Proposal", "Budget Adoption", "Reserve Fund", "Financial Forecast"]
+        # will make adjustable in the future
+  
         results = run_spider(url,target_keywords)
 
         with Session(engine) as session:
@@ -56,7 +56,7 @@ def scrape_and_store(self, url:str):
         with Session(engine) as session:
             source_page = session.exec(select(SourcePage).filter(SourcePage.uid == task_id)).first()
         if source_page:
-            source_page.status = 'FAILED'
+            source_page.status = "FAILED"
             session.commit()
 
 

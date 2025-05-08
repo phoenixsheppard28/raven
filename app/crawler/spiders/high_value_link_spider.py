@@ -3,6 +3,8 @@ from scrapy.http import HtmlResponse
 from openai import OpenAI
 from internal.secrets import settings
 import mimetypes
+from urllib.parse import urljoin
+import trafilatura
 
 
 # ! fix this entire file
@@ -37,13 +39,16 @@ class HighValueLinkSpider(scrapy.Spider):
         links = response.css('a::attr(href)').getall()
         for link in links:
             # handle relative links?
-            if link.startswith(('http://', 'https://')) and not any(
-                link.endswith(ext) for ext in ['.jpg', '.jpeg', '.png', '.gif', '.css', '.js']): # filter non document links
-                yield scrapy.Request(url=link, callback=self.parse_link)
-                # ? fix this stuff 
+            if any(link.endswith(ext) for ext in ['.jpg', '.jpeg', '.png', '.gif', '.css', '.js']):
+                continue
+            absolute_link = urljoin(response.url, link)
+            yield scrapy.Request(url=absolute_link, callback=self.parse_link)
+           
 
     def parse_link(self, response: HtmlResponse):
-        text = response.text[:1000] # cap text 
+        
+        extracted_text = trafilatura.extract(response.text)
+        text = extracted_text[:5000] # cap text if needed, but the model im using is so cheap it doesnt matter 
         relevance_score = self.rank_relevance(text)
         yield {
             "url": response.url,
@@ -53,15 +58,22 @@ class HighValueLinkSpider(scrapy.Spider):
         }
 
     def rank_relevance(self, text):
-        response = self.chat_client.responses.create(
-            model="gpt-4.1-nano",
-            input=f"Rank the relevance of this text for keywords  {self.target_keywords} on a float (2 digit) scale of 1-10. \
-            only output the SINGULAR resultant rank, not anything else. Just a Singular Rank: {text}",
-            max_output_tokens=17
+        prompt = (
+        f"Given the following text, rate its relevance to these keywords: {self.target_keywords}.\n"
+        "Return ONLY a single float number between 1 and 10, where 10 is most relevant and 1 is least relevant.\n"
+        f"Text: {text}" # maybe give it an example
         )
-        return float(response.output_text)
+        response = self.chat_client.chat.completions.create(
+            model="gpt-4.1-nano",
+            messages=[
+            {"role": "system", "content": "You are a helpful assistant that ONLY returns a float between 1 and 10, and never any explanation."},
+            {"role": "user", "content": prompt}
+            ],
+            max_tokens=17
+        )
+        return float(response.choices[0].message.content.strip()) if response.choices else -1.0 #placeholder 
 
-    def extract_keywords(self, text): #what?
+    def extract_keywords(self, text): 
         return [kw for kw in self.target_keywords if kw.lower() in text.lower()]
     
     def guess_file_type(self,response: HtmlResponse):
