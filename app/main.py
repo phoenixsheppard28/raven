@@ -23,7 +23,8 @@ app = FastAPI()
 
 @app.post("/url")
 async def submit_scrape(request_url:str)->str: # submit a url to be scraped 
-    result : AsyncResult = scrape_and_store.delay(request_url)
+    result : AsyncResult = scrape_and_store.delay(request_url) 
+    # todo add check to make sure it has not been scraped before unless an override is set
     
     return result.id # todo should probably move this to use the add_rows function
 
@@ -43,3 +44,5 @@ def read_pages():
 @app.get("/results/{uuid}")
 def get_scrape_result(uuid:str):
     return {"message":f"Result for job {uuid}"}
+
+# TODO create endpoints to access based off keywords, file types, rankings, etc.

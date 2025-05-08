@@ -1,3 +1,4 @@
+
 celery:
 	poetry run celery -A tasks worker --loglevel=info 
 
@@ -11,7 +12,8 @@ run:
 	poetry run uvicorn main:app --reload
 
 reset_db:
-	poetry run python3 internal/db_setup.py 
+	poetry run python3 -m internal.db_setup
 
 celery_scale:
 	poetry run celery -A tasks worker --loglevel=info --concurrency=8
+
