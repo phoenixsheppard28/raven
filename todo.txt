@@ -1,0 +1,16 @@
+# add error checking and relfect that in the database
+# make sure the keyword finding is 
+# test it on millions of webpages!
+# implement ip rotation 
+# implement regex instide the spider
+
+
+IMPORTANT 
+# add changable keywords from the api level 
+# write docs 
+# FIX CELERY BUG when taking multiple tasks at a time
+# give the gpt an example
+# gpt to find the file type 
+# MAKE THE API to interacti with it 
+# add date scraped to databse 
+# user can pass in their own texts
