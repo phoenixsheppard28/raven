@@ -54,4 +54,10 @@
 2. ### Increace # of Workers
     - Horizontally scale Celery by increacing the number of workers
     - Ideally, this can be done automatically based on the load experienced
-3. ### 
+3. ### Modify Celery Multithreading
+    - As is, there is a bug with Celery and Scrapy that prevents a celery worker from performing more than 1 task total.
+    - This is caused ```twisted.internet.reactor```, which Celery and Scrapy both try to control 
+    - This causes the reactor state to become broken for a given worker, and as such further tasks with that worker will do nothing
+    - This can be simply solved by adding the setting \
+    ```--max-tasks-per-child=1``` which recreates a new worker process after 1 crawl
+    - The overhead for this is not ideal, and should be solved with a multithreading library

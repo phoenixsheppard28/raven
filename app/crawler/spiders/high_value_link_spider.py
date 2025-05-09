@@ -5,12 +5,13 @@ from internal.secrets import settings
 import mimetypes
 from urllib.parse import urljoin
 import trafilatura
+from scrapy.spiders import CrawlSpider
 
 
 # ! fix this entire file
 
 
-class HighValueLinkSpider(scrapy.Spider):
+class HighValueLinkSpider(CrawlSpider):
     name = "high_value_link_spider"
     
 
@@ -26,10 +27,10 @@ class HighValueLinkSpider(scrapy.Spider):
     }
 
     def __init__(self, start_url, target_keywords=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
         self.start_urls = [start_url] # maybe it can do multiple at a time? or would it be better 1 per celery task 
         self.chat_client = OpenAI(api_key=settings.OPENAI_API_KEY)
         self.target_keywords = target_keywords 
+        super(HighValueLinkSpider,self).__init__(**kwargs)
 
 
     def start_requests(self):
