@@ -21,7 +21,8 @@ class HighValueLinkSpider(scrapy.Spider):
         'DEPTH_LIMIT': 2,
         'DOWNLOAD_DELAY': 0.5,
         'ROBOTSTXT_OBEY': True,
-        'USER_AGENT': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        'USER_AGENT': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        # 'LOG_LEVEL':'CRITICAL'
     }
 
     def __init__(self, start_url, target_keywords=None, *args, **kwargs):
@@ -48,13 +49,14 @@ class HighValueLinkSpider(scrapy.Spider):
     def parse_link(self, response: HtmlResponse):
         
         extracted_text = trafilatura.extract(response.text)
-        text = extracted_text[:5000] # cap text if needed, but the model im using is so cheap it doesnt matter 
+        text = extracted_text  # [:5000] # cap text if needed, but the model im using is so cheap it doesnt matter 
         relevance_score = self.rank_relevance(text)
         yield {
             "url": response.url,
             "relevance_score": relevance_score,
             "file_type": self.guess_file_type(response),
-            "keywords": self.extract_keywords(text)
+            "keywords": self.extract_keywords(text),
+            "text":text
         }
 
     def rank_relevance(self, text):
@@ -66,7 +68,9 @@ class HighValueLinkSpider(scrapy.Spider):
         response = self.chat_client.chat.completions.create(
             model="gpt-4.1-nano",
             messages=[
-            {"role": "system", "content": "You are a helpful assistant that ONLY returns a float between 1 and 10, and never any explanation."},
+            {"role": "system", "content": "You are a helpful assistant that ONLY returns a float between 1 and 10, and never any explanation. \
+             Here is an example of a 1/10 relevance score text: . \
+             Here is an example of a 10/10 relevance score text: ."},
             {"role": "user", "content": prompt}
             ],
             max_tokens=17

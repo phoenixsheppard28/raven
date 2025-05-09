@@ -1,6 +1,6 @@
 
 celery:
-	poetry run celery -A tasks worker --loglevel=ERROR 
+	poetry run celery -A tasks worker --loglevel=ERROR  --pool=solo
 
 redis:
 	brew services start redis 

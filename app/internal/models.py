@@ -19,6 +19,7 @@ class TargetPage(SQLModel,table=True):
     file_type: str
     relevance_score: float
     matched_keywords: List[str] = Field(sa_column=Column(JSON))
+    text: Optional[str] = Field(default=None) 
     
     # source: Optional[SourcePage] = Relationship(back_populates="targets") # may not need this 
  

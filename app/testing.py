@@ -6,19 +6,15 @@ from sqlmodel import Session, select
 from internal.models import SourcePage, TargetPage
 import uuid
 from crawler.run_spider import run_spider
-# from twisted.internet import reactor
-# import crochet
 
-# crochet. this is gonna fix the concurrency issue with scrapy but i might switch stuff around
 
 app = Celery('tasks', broker=settings.REDIS_URL) # redis is used as the broker 
 chat_client=OpenAI(api_key=settings.OPENAI_API_KEY)
 
 
-@app.task(bind=True) # bind allows accessing of self
-def scrape_and_store(self, url:str):
+def scrape_and_store(url:str):
     try:
-        task_id = uuid.UUID(self.request.id) # this is the celery generated UUID we can use to index the task once completed 
+        task_id = uuid.uuid4() # this is the celery generated UUID we can use to index the task once completed 
 
         p = SourcePage(
                 uid = task_id, # 
@@ -46,7 +42,8 @@ def scrape_and_store(self, url:str):
                     target_url= result["url"],
                     file_type=result["file_type"],
                     relevance_score=result["relevance_score"],
-                    matched_keywords=result["keywords"] # TODO must fix this one
+                    matched_keywords=result["keywords"], # TODO must fix this one
+                    text=result["text"] if result["text"] else None
                 )
                 session.add(item)
 
@@ -63,3 +60,7 @@ def scrape_and_store(self, url:str):
             session.commit()
 
 
+if __name__ == "__main__":
+    url = "https://www.a2gov.org/"
+    scrape_and_store(url)
+    

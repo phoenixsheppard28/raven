@@ -5,7 +5,12 @@ from scrapy import signals
 
 
 
-def run_spider(start_url:str,target_keywords:list): #spider abstraction for the celery task to use 
+def run_spider(start_url:str,target_keywords:list): 
+    """Spider abstraction to run the high value link spider
+    Args:
+        start_url (str): The URL to start the spider from.
+        target_keywords (list[str]): A list of keywords to search for in the text.
+    """
 
     spider_settings = {
     'ITEM_PIPELINES': {
