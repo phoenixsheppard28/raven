@@ -460,12 +460,12 @@ async def reset_database(session: Session = Depends(get_session)):
         session (Session): Database session dependency.
     
     Returns:
-        Response with 204 No Content status code on success.
+        Response with 200 on success.
     """
     session.exec(delete(TargetPage))
     session.exec(delete(SourcePage))
     session.commit()
-    return JSONResponse(content={"message": "Successfully deleted all data in database"}, status_code=204)
+    return JSONResponse(content={"message": "Successfully deleted all data in database"}, status_code=200)
 
 
 @app.delete(
