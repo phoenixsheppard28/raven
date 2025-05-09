@@ -6,7 +6,9 @@ from sqlmodel import Session, select
 from app.internal.models import SourcePage, TargetPage
 import uuid
 from app.crawler.run_spider import run_spider
-import crochet
+import logging
+logging.getLogger("child").propagate = False # removes celery duplicate logs by placing this at highst level of app
+
 
 app = Celery('tasks') 
 app.config_from_object('app.celeryconfig')
@@ -15,7 +17,7 @@ chat_client=OpenAI(api_key=settings.OPENAI_API_KEY)
 
 
 @app.task(bind=True) # bind allows accessing of self
-def scrape_and_store(self, url:str,target_keywords:list):
+def scrape_and_store(self, url:str,target_keywords:list | None = None):
     """ scrape a url and store the results in the database 
         target_keywords is a list of keywords to search for in the text
         if not provided, will use the default keywords from the settings
@@ -31,7 +33,6 @@ def scrape_and_store(self, url:str,target_keywords:list):
             session.add(p)
             session.commit() 
         
-        target_keywords = ["Budget", "ACFR", "Finance Director", "CFO", "Financial Report", "Expenditure", "Revenue", "General Fund", "Capital Improvement Plan", "Fiscal Year", "Audit", "Auditor", "Treasurer", "Bond Issuance", "Municipal Bonds", "Debt Service", "Fund Balance", "Operating Budget", "Financial Statement", "Public Finance", "Controller", "Accounting", "CAFR", "GFOA", "Financial Planning", "Budget Hearing", "Budget Proposal", "Budget Adoption", "Reserve Fund", "Financial Forecast"]
         # will make adjustable in the future
   
         results = run_spider(url,target_keywords)
@@ -49,9 +50,11 @@ def scrape_and_store(self, url:str,target_keywords:list):
                     target_url= result["url"],
                     file_type=result["file_type"],
                     relevance_score=result["relevance_score"],
-                    matched_keywords=result["keywords"] # TODO must fix this one
+                    matched_keywords=result["keywords"],
+                    text=result["text"],
                 )
-                session.add(item)
+                if item.relevance_score >0.5:
+                    session.add(item)
 
             session.commit()
             

@@ -114,3 +114,6 @@ docker rmi redis:7-alpine
     - This can be simply solved by adding the setting \
     ```--max-tasks-per-child=1``` which recreates a new worker process after 1 crawl
     - The overhead for this is not ideal, and should be solved with a multithreading library
+4. ### Extend possible filetypes
+    - As of now, this only works with html pages because the text extractor is only for html pages
+    - There are packages that allow converstion of documents to html that can then be filtered which can be used 

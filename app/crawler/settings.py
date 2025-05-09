@@ -4,8 +4,9 @@ NEWSPIDER_MODULE = 'app.crawler.spiders'
 ITEM_PIPELINES = {
     'app.crawler.pipelines.ResultCollectorPipeline': 100, #collector pipeline
 }
-DEPTH_LIMIT = 2 # only go 2 links deep, can be configured
-DOWNLOAD_DELAY = 0.5 # delay between requests
+DEPTH_LIMIT = 2 # only go 1 links deep, can be configured
+DOWNLOAD_DELAY = 0.1 # delay between requests
+DOWNLOAD_TIMEOUT = 1 # delay between requests
 ROBOTSTXT_OBEY = True
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
 IGNORED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.css', '.js']

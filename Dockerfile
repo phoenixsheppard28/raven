@@ -9,12 +9,8 @@ WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    build-essential \
     libxml2-dev \
     libxslt1-dev \
-    libffi-dev \
-    libssl-dev \
-    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Poetry

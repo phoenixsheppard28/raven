@@ -13,18 +13,7 @@ def run_spider(start_url:str,target_keywords:list):
         target_keywords (list[str]): A list of keywords to search for in the text.
     """
 
-    # spider_settings = {
-    # 'ITEM_PIPELINES': {
-    #     'crawler.pipelines.ResultCollectorPipeline': 100,
-    # },
-    # 'DEPTH_LIMIT': 2,
-    # 'DOWNLOAD_DELAY': 0.5,
-    # 'ROBOTSTXT_OBEY': True,
-    # 'USER_AGENT': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-    # }
-
     spider_settings = get_project_settings()
-
 
     process = CrawlerProcess(settings=spider_settings)
     results = [] # simple list to hold our scraping results 
@@ -32,8 +21,6 @@ def run_spider(start_url:str,target_keywords:list):
     def crawler_results(spider):
         if hasattr(spider, 'collected_items'):
             results.extend(spider.collected_items)
-
-
 
     dispatcher.connect(crawler_results, signal=signals.spider_closed)
 
