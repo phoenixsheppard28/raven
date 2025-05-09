@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends
-from tasks import scrape_and_store
+from app.tasks import scrape_and_store
 from celery.result import AsyncResult
-from internal.db_setup import engine, SourcePage, TargetPage
+from app.internal.db_setup import engine, SourcePage, TargetPage
 from sqlmodel import Session, select
 from typing import List
 

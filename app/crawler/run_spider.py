@@ -1,7 +1,8 @@
-from crawler.spiders.high_value_link_spider import HighValueLinkSpider
+from app.crawler.spiders.high_value_link_spider import HighValueLinkSpider
 from scrapy.crawler import CrawlerProcess
 from scrapy.signalmanager import dispatcher
 from scrapy import signals
+from scrapy.utils.project import get_project_settings
 
 
 
@@ -12,15 +13,17 @@ def run_spider(start_url:str,target_keywords:list):
         target_keywords (list[str]): A list of keywords to search for in the text.
     """
 
-    spider_settings = {
-    'ITEM_PIPELINES': {
-        'crawler.pipelines.ResultCollectorPipeline': 100,
-    },
-    'DEPTH_LIMIT': 2,
-    'DOWNLOAD_DELAY': 0.5,
-    'ROBOTSTXT_OBEY': True,
-    'USER_AGENT': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-    }
+    # spider_settings = {
+    # 'ITEM_PIPELINES': {
+    #     'crawler.pipelines.ResultCollectorPipeline': 100,
+    # },
+    # 'DEPTH_LIMIT': 2,
+    # 'DOWNLOAD_DELAY': 0.5,
+    # 'ROBOTSTXT_OBEY': True,
+    # 'USER_AGENT': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+    # }
+
+    spider_settings = get_project_settings()
 
 
     process = CrawlerProcess(settings=spider_settings)

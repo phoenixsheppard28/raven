@@ -1,14 +1,16 @@
 from celery import Celery
 from openai import OpenAI
-from internal.secrets import settings
-from internal.db_setup import engine
+from app.internal.secrets import settings
+from app.internal.db_setup import engine
 from sqlmodel import Session, select
-from internal.models import SourcePage, TargetPage
+from app.internal.models import SourcePage, TargetPage
 import uuid
-from crawler.run_spider import run_spider
+from app.crawler.run_spider import run_spider
 import crochet
 
-app = Celery('tasks', broker=settings.REDIS_URL) 
+app = Celery('tasks') 
+app.config_from_object('app.celeryconfig')
+
 chat_client=OpenAI(api_key=settings.OPENAI_API_KEY)
 
 

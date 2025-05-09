@@ -62,3 +62,7 @@ docs/_build/
 
 # OS or system files
 .localized
+
+# Docker
+.docker/
+docker-compose.override.yml

@@ -4,7 +4,7 @@ from .models import SourcePage, TargetPage
 
 
 
-engine = create_engine("sqlite:///database.db") # should be swapped for postgresql upon higher throughput for higher write capacity
+engine = create_engine("sqlite:///app/database.db") # should be swapped for postgresql in production
 SQLModel.metadata.create_all(engine)
 
 def reset_db():

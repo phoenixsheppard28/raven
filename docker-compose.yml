@@ -1,0 +1,27 @@
+
+services:
+  web:
+    build: .
+    container_name: web
+    command: poetry run uvicorn app.main:app --reload --host 0.0.0.0
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+
+  celery:
+    build: .
+    container_name: celery
+    command: poetry run celery -A app.tasks worker --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
