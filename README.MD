@@ -71,7 +71,7 @@ docker rmi redis:7-alpine
 
 # High Level App Flow
 
-1. ### User sends POST request to /scrape-url endpoint 
+1. ### User sends POST request to /api/tasks/urls/ endpoint 
 
 2. ### Server hands off to celery worker queue
     - Job is queued for background processing, does not block subsequent API requests
