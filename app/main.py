@@ -504,7 +504,7 @@ async def delete_source_page(
             raise HTTPException(status_code=404, detail="Source page not found")
             
         session.commit()
-        return JSONResponse(content={"message": "Source page and related target pages deleted"}, status_code=204)
+        return JSONResponse(content={"message": "Source page and related target pages deleted"}, status_code=200)
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid UUID format")
     except Exception as e:

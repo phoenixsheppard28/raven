@@ -56,7 +56,7 @@ def scrape_and_store(self, url:str,target_keywords:list | None = None):
                     text=result["text"],
                     created_at=datetime.utcnow()
                 )
-                if item.relevance_score >1:
+                if item.relevance_score >1: #filter out noise immediately
                     session.add(item)
 
             session.commit()
