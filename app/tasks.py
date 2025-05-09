@@ -60,5 +60,6 @@ def scrape_and_store(self, url:str):
         if source_page:
             source_page.status = "FAILED"
             session.commit()
+        return {"status": "failed", "error": str(e)}
 
 

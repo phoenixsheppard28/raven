@@ -43,7 +43,7 @@ class HighValueLinkSpider(CrawlSpider):
         links = response.css('a::attr(href)').getall()
         for link in links:
             # handle relative links?
-            if any(link.endswith(ext) for ext in self.settings.get('IGNORED_EXTENSIONS')):
+            if any(link.endswith(ext) for ext in self.spider_settings.get('IGNORED_EXTENSIONS')):
                 continue
             absolute_link = urljoin(response.url, link)
             yield scrapy.Request(url=absolute_link, callback=self.parse_link)

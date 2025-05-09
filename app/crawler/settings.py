@@ -1,8 +1,8 @@
 BOT_NAME = 'crawler'
-SPIDER_MODULES = ['crawler.spiders']
-NEWSPIDER_MODULE = 'crawler.spiders'
+SPIDER_MODULES = ['app.crawler.spiders']
+NEWSPIDER_MODULE = 'app.crawler.spiders'
 ITEM_PIPELINES = {
-    'crawler.pipelines.ResultCollectorPipeline': 100, #collector pipeline
+    'app.crawler.pipelines.ResultCollectorPipeline': 100, #collector pipeline
 }
 DEPTH_LIMIT = 2 # only go 2 links deep, can be configured
 DOWNLOAD_DELAY = 0.5 # delay between requests

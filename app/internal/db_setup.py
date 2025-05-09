@@ -1,6 +1,6 @@
 from sqlmodel import SQLModel, create_engine, Session
 from sqlalchemy import delete
-from .models import SourcePage, TargetPage
+from app.internal.models import SourcePage, TargetPage
 
 
 

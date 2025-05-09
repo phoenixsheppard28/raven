@@ -27,6 +27,8 @@ RUN poetry config virtualenvs.create false \
 
 COPY . /app/
 
+COPY scrapy.cfg /app/scrapy.cfg
+
 RUN useradd -m appuser
 USER appuser
 
