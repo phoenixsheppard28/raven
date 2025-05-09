@@ -1,7 +1,30 @@
+# Pursuit Take Home: Overview
+
+### A web scraper that identifies and prioritizes the highest-value links on a page
+
+1. Allows adjustable keywords and importance criteria
+2.  Provides data access from a basic API
+3.  
+
 # Quickstart 🚀
 Follow these steps to run the project locally using Docker. 
+### 1. Setup
 
-### 1. Running 
+#### Navigate to the ```app/``` directory and create a .env
+
+```
+cd app/
+touch .env
+```
+
+#### fill .env with 
+```
+OPENAI_API_KEY=...
+REDIS_URL="redis://redis:6379/0"
+``` 
+- The Redis url is local for this example
+
+### 2. Running 
 
 #### Ensure the Docker daemon is running: so have the desktop app open
 
@@ -23,10 +46,10 @@ docker compose up
 
 #### For interactive documentation, go to the docs endpoint in the browser
 ` localhost:8000/docs`
-- You can also go to the database.db file and inspect it with your desired SQLite viewer
+- You can also view the **main.py** file and inspect the endpoints there
 
 
-### 2. Cleanup 
+### 3. Cleanup 
 #### When finished, stop containers
 
 ``` 
@@ -39,10 +62,6 @@ docker compose down
 docker compose -f docker-compose.yml down --volumes --rmi local 
 docker rmi redis:7-alpine
 ```
-
-
-
-
 
 # High Level App Flow
 
