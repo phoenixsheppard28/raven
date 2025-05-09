@@ -15,7 +15,11 @@ chat_client=OpenAI(api_key=settings.OPENAI_API_KEY)
 
 
 @app.task(bind=True) # bind allows accessing of self
-def scrape_and_store(self, url:str):
+def scrape_and_store(self, url:str,target_keywords:list):
+    """ scrape a url and store the results in the database 
+        target_keywords is a list of keywords to search for in the text
+        if not provided, will use the default keywords from the settings
+    """
     try:
         task_id = uuid.UUID(self.request.id) # this is the celery generated UUID we can use to index the task once completed 
 

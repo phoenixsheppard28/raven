@@ -8,7 +8,6 @@
 IMPORTANT 
 # add changable keywords from the api level 
 # write docs 
-# FIX CELERY BUG when taking multiple tasks at a time
 # give the gpt an example
 # gpt to find the file type 
 # MAKE THE API to interacti with it 
