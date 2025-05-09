@@ -7,7 +7,8 @@ from app.internal.models import SourcePage, TargetPage
 import uuid
 from app.crawler.run_spider import run_spider
 import logging
-logging.getLogger("child").propagate = False # removes celery duplicate logs by placing this at highst level of app
+from datetime import datetime
+logging.getLogger("child").propagate = False # removes celery duplicate logs 
 
 
 app = Celery('tasks') 
@@ -28,7 +29,8 @@ def scrape_and_store(self, url:str,target_keywords:list | None = None):
         p = SourcePage(
                 uid = task_id, 
                 url=url,
-                status='PENDING') # set to pending when creating task 
+                status='PENDING',
+                created_at=datetime.utcnow()) # set to pending when creating task 
         with Session(engine) as session:
             session.add(p)
             session.commit() 
@@ -52,8 +54,9 @@ def scrape_and_store(self, url:str,target_keywords:list | None = None):
                     relevance_score=result["relevance_score"],
                     matched_keywords=result["keywords"],
                     text=result["text"],
+                    created_at=datetime.utcnow()
                 )
-                if item.relevance_score >0.5:
+                if item.relevance_score >1:
                     session.add(item)
 
             session.commit()

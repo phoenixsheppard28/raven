@@ -54,24 +54,20 @@ class HighValueLinkSpider(CrawlSpider):
 
     def rank_relevance(self, text,url):
         prompt = (
-        f"Given the following text and the url it came from, rate its relevance to these keywords: {self.target_keywords}.\n"
-        "Return ONLY a single float number between 1 and 10, where 10 is most relevant and 1 is least relevant.\n"
+        f"Given the following text and the url it came from, rate if it contains content relevant to these keywords: {self.target_keywords}.\n"
+        "Return ONLY a single float number between 1 and 10, where 10 is most relevant and 1 is least relevant. NOT ALL THE TEXT HAS TO BE RELEVANT TO THE KEYWORDS, only some\n"
         f"Text: {text}\n"
         f"URL: {url}" 
         )
-        response = self.chat_client.chat.completions.create(
+        response = self.chat_client.completions.create(
             model=self.spider_settings.get('GPT_MODEL'),
-            messages=[
-            {"role": "system", "content": f"You are a helpful assistant that ONLY returns a float between 1 and 10, and never any explanation. \
-             Here is an example of a 1/10 relevance score text:  . \
-             Here is an example of a 10/10 relevance score text: ."},
-            {"role": "user", "content": prompt}
-            ],
+            prompt=prompt,
+            temperature=0.2,
             max_tokens=self.spider_settings.get('GPT_MAX_TOKENS')
         )
-        f = float(response.choices[0].message.content.strip())
+        f = float(response.choices[0].text.strip()) if response.choices else -1.0 #placeholder
         print(f)
-        return float(response.choices[0].message.content.strip()) if response.choices else -1.0 #placeholder 
+        return f
 
     def extract_keywords(self, text): 
         return [kw for kw in self.target_keywords if kw.lower() in text.lower()]

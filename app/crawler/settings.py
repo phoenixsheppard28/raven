@@ -10,7 +10,7 @@ DOWNLOAD_TIMEOUT = 1 # delay between requests
 ROBOTSTXT_OBEY = True
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
 IGNORED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.css', '.js']
-GPT_MODEL = "gpt-4.1-nano"
+GPT_MODEL = "gpt-3.5-turbo-instruct"
 GPT_MAX_TOKENS = 17
 DEFAULT_TARGET_KEYWORDS = [
     "Budget", "ACFR", "Finance Director", "CFO", "Financial Report",

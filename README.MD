@@ -117,3 +117,8 @@ docker rmi redis:7-alpine
 4. ### Extend possible filetypes
     - As of now, this only works with html pages because the text extractor is only for html pages
     - There are packages that allow converstion of documents to html that can then be filtered which can be used 
+5. ### Implement proxy rotation
+    - I have the crawler set slow enough that it doesent trigger any ip banning, but for robustness we could add ip roation in the middlewares.py file in the crawler folder to mitigate this if it an isssue
+6. ### Optimize the Heuristic
+    - I used the chatgpt api method to determine relevance, but i think a ML model along with this scraping could work better. 
+    - That would require a whole new development process but a promising idea
