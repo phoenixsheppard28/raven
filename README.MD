@@ -53,6 +53,7 @@ docker compose up
 
 ### (IMPORANT) this project ships with example data in the SQLite database
 - to see what type of data this project has to offer, just GET the **/api/source-pages** , **/api/target-pages**, and **/api/statistics** endpoints: no OpenAI key needed! 
+    - Note you still have to put a placeholder value for OPENAI_API_KEY in the .env for celery to not throw an error
 
 
 ### 3. Cleanup 
