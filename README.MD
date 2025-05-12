@@ -1,4 +1,4 @@
-# Pursuit Take Home
+# Pursuit
 
 ### A web scraper that identifies and prioritizes the highest-value links on a page
 
