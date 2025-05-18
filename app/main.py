@@ -34,7 +34,7 @@ class TargetPageResponse(BaseModel):
     text: Optional[str] = None
     created_at: datetime
 
-# Request models
+
 class ScrapeUrlRequest(BaseModel):
     url: HttpUrl
     target_keywords: Optional[List[str]] = None
@@ -76,7 +76,6 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# Organize endpoints by tags
 @app.post(
     "/api/tasks/urls/single",
     response_model=TaskResponse,
@@ -95,10 +94,9 @@ async def submit_scrape(request: ScrapeUrlRequest, session: Session = Depends(ge
     Returns:
         TaskResponse: Contains the task ID and initial status.
     """
-    # Start the Celery task but don't try to access its status
+    # start the Celery task 
     result = scrape_and_store.delay(str(request.url), request.target_keywords)
     
-    # Return a fixed status since we can't access Celery's status
     return {"task_id": result.id, "status": "PENDING"}
 
 
@@ -137,13 +135,12 @@ async def get_task_status(
             select(SourcePage).where(SourcePage.uid == uid_obj)
         ).first()
     except ValueError:
-        # Handle invalid UUID format
         raise HTTPException(status_code=400, detail="Invalid UUID format")
     
     if not source_page:
         return {
             "task_id": task_id,
-            "status": "PENDING"  # Default status if not found
+            "status": "PENDING"  
         }
     response = {
         "task_id": task_id,
@@ -159,9 +156,6 @@ async def get_task_status(
             "target_count": len(target_pages)
         }
     return response
-
-
-
 
 
 @app.get(
@@ -270,9 +264,6 @@ async def list_target_pages(
         filters.append(TargetPage.relevance_score >= min_relevance)
     
     if keyword:
-        # This requires JSON querying capability which differs by database
-        # For SQLite, this may not work directly and might need a different approach
-        # This is a simplified approach assuming matched_keywords is queryable
         filters.append(TargetPage.matched_keywords.contains([keyword]))
     
     if source_uid:
@@ -345,31 +336,23 @@ async def search_target_pages(
     Returns:
         dict: Search results with metadata.
     """
-    # Base query with minimum score
     query = select(TargetPage).where(TargetPage.relevance_score >= min_score)
     
-    # Add filters
     filters = []
     
-    # Filter for text search in content and keywords
-    # Note: This is a simplified approach that may need adaptation based on your DB
     filters.append(or_(
         TargetPage.text.contains(q),
         TargetPage.matched_keywords.contains([q])
     ))
     
-    # Add file type filter if specified
     if file_types:
         filters.append(TargetPage.file_type.in_(file_types))
     
-    # Apply all filters
     if filters:
         query = query.where(and_(*filters))
     
-    # Execute query
     results = session.exec(query.limit(100)).all()
     
-    # Prepare response
     return {
         "query": q,
         "count": len(results),
@@ -382,7 +365,6 @@ async def search_target_pages(
                 "relevance_score": page.relevance_score,
                 "file_type": page.file_type,
                 "matched_keywords": page.matched_keywords,
-                # Include a snippet of text if available
                 "snippet": page.text[:200] + "..." if page.text and len(page.text) > 200 else page.text
             }
             for page in results
@@ -405,24 +387,21 @@ async def get_scraping_statistics(session: Session = Depends(get_session)):
     Returns:
         dict: Statistics about source pages and target pages.
     """
-    # Count source pages by status
+    
     source_pages_total = session.exec(select(SourcePage)).all()
     status_counts = {}
     for page in source_pages_total:
         status_counts[page.status] = status_counts.get(page.status, 0) + 1
     
-    # Get target pages summary
     target_pages = session.exec(select(TargetPage)).all()
     
-    # Calculate average relevance score
     avg_score = sum(page.relevance_score for page in target_pages) / len(target_pages) if target_pages else 0
     
-    # Count file types
     file_type_counts = {}
     for page in target_pages:
         file_type_counts[page.file_type] = file_type_counts.get(page.file_type, 0) + 1
     
-    # Get top keywords
+    # top keywords
     keyword_counts = {}
     for page in target_pages:
         for keyword in page.matched_keywords:
@@ -494,10 +473,10 @@ async def delete_source_page(
     try:
         uid_obj = UUID(page_uid)
         
-        # First delete related target pages
+        
         session.exec(delete(TargetPage).where(TargetPage.job_uid == uid_obj))
         
-        # Then delete the source page
+        
         result = session.exec(delete(SourcePage).where(SourcePage.uid == uid_obj))
         
         if result.rowcount == 0:
