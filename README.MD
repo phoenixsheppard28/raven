@@ -9,7 +9,7 @@
 ### This readme will provide an overview of the entire project
 - Additional, more granular info can be found in docs/
 
-# Quickstart 🚀
+# Quickstart 
 Follow these steps to run the project locally using Docker. 
 ### 1. Setup
 
