@@ -21,7 +21,7 @@
 2. Start the Docker daemon
 3. Build and run the containers:
    ```bash
-   cd pursuit/
+   cd raven/
    docker compose build
    docker compose up
    ```
