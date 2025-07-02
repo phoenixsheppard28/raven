@@ -31,10 +31,10 @@ REDIS_URL="redis://redis:6379/0"
 
 #### Ensure the Docker daemon is running: so have the desktop app open
 
-#### Ensure your in the ```pursuit/``` directory 
+#### Ensure your in the ```raven/``` directory 
 
 ```
-cd pursuit/
+cd raven/
 ```
 
 #### Build the docker containers and start the service
